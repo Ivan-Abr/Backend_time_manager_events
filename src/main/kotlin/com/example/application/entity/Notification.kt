@@ -20,7 +20,7 @@ data class Notification(
 
     @ManyToOne
     @JoinColumn(name = "event_id")
-    var event: Event,
+    var event: Event?,
 ){
 
 }

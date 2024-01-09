@@ -21,7 +21,7 @@ class UserService(private var userRepo: UserRepo,
         return userRepo.findById(userId)
     }
 
-    fun createNewUser(user: User):User{
+    fun createNewUser(user: User):User?{
         if (userRepo.findUserByName(user.name)!=null) {
             throw IllegalStateException("User with name ${user.name} already exists")
         }

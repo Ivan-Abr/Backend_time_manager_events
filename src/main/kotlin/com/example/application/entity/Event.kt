@@ -31,11 +31,11 @@ data class Event(
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    var user:User,
+    var user:User?,
 
 
     @OneToMany(mappedBy="event")
     @JsonIgnore
-    var notes: Set<Notification>
+    var notes: Set<Notification>?
 
 )

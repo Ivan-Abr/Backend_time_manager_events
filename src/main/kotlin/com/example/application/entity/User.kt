@@ -28,7 +28,7 @@ data class User(
 
     @OneToMany(mappedBy="user")
     @JsonIgnore
-    var events: Set<Event>
+    var events: Set<Event?>?
 
 
 
