@@ -4,6 +4,7 @@ import com.example.application.entity.Event
 import com.example.application.service.EventService
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDate
 import java.util.*
 
 @RestController
@@ -36,6 +37,12 @@ class EventController(private var eventService: EventService) {
     fun changeEventDesc(@PathVariable("eventId") eventId: Long,
                       @RequestParam(required = false) eventDesc: String){
         eventService.updateEventDesc(eventId, eventDesc)
+    }
+
+    @PutMapping(path = ["{eventId}/date"])
+    fun changeEventDate(@PathVariable("eventId") eventId: Long,
+                        @RequestParam(required = false) eventDate: LocalDate){
+        eventService.updateEventDate(eventId, eventDate)
     }
 
 

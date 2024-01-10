@@ -7,6 +7,7 @@ import com.example.application.repository.EventRepo
 import com.example.application.repository.NotificationRepo
 import com.example.application.repository.TagRepo
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import java.util.*
 
 @Service
@@ -46,6 +47,15 @@ class EventService(private var eventRepo: EventRepo,
 
         if (eventDesc != null && eventDesc.isNotEmpty() && event.eventDesc!= eventDesc)
             event.eventDesc = eventDesc
+        return eventRepo.save(event)
+    }
+
+    fun updateEventDate(eventId: Long, eventDate: LocalDate):Event?{
+        val event = eventRepo.findById(eventId)
+            .orElseThrow { java.lang.IllegalStateException("factor with id" + eventId + "does not exist") }
+
+        if (eventDate!= null  && event.eventDate!= eventDate)
+            event.eventDate = eventDate
         return eventRepo.save(event)
     }
     

@@ -3,6 +3,7 @@ package com.example.application.entity
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*
+import java.time.LocalDate
 
 
 @Entity
@@ -21,6 +22,10 @@ data class Event(
     @JsonProperty("event_desc")
     @Column(name = "event_desc")
     var eventDesc: String,
+
+    @JsonProperty("event_date")
+    @Column(name = "event_date")
+    var eventDate: LocalDate,
 
     @ManyToMany
     @JoinTable(
