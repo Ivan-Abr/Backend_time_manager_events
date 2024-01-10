@@ -3,12 +3,14 @@ package com.example.application.controller
 import com.example.application.entity.Event
 import com.example.application.entity.User
 import com.example.application.service.UserService
+import lombok.extern.slf4j.Slf4j
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
 @RequestMapping("timemanager/user")
+@Slf4j
 class UserController(private var userService: UserService) {
 
     @GetMapping()

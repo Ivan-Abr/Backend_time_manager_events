@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("event")
+@RequestMapping("timemanager/event")
 class EventController(private var eventService: EventService) {
 
     @GetMapping()

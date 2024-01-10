@@ -16,7 +16,7 @@ import java.time.LocalDate
 import java.util.*
 
 @RestController
-@RequestMapping("notification")
+@RequestMapping("timemanager/notification")
 class NotificationController(private var notificationService: NotificationService) {
 
     @GetMapping()

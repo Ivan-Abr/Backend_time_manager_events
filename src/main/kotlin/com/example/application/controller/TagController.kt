@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
 @RestController
-@RequestMapping("tag")
+@RequestMapping("timemanager/tag")
 class TagController(private var tagService: TagService) {
 
     @GetMapping()
