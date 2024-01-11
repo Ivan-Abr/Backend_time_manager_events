@@ -24,9 +24,10 @@ import java.util.*
 @Slf4j
 @Component
 class HeadersLoggingFilter(
-        private var userRepo: UserRepo
+        private var userRepo: UserRepo,
+        private var envConfig: EnvConfig
 ) : OncePerRequestFilter() {
-    private var serverAuthApiAddress: String = EnvConfig().SERVER_BACKEND_AUTH_API
+    private var serverAuthApiAddress: String = envConfig.SERVER_BACKEND_AUTH_API
 
     @Throws(IOException::class, ServletException::class)
     override fun doFilterInternal(

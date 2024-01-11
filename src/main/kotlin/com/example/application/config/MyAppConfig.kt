@@ -12,13 +12,15 @@ class MyAppConfig {
 
     @Autowired
     private lateinit var userRepo: UserRepo
+    @Autowired
+    private lateinit var envConfig: EnvConfig
 
     @Bean
     fun registrationBean(): FilterRegistrationBean<HeadersLoggingFilter>? {
         val registrationBean: FilterRegistrationBean<HeadersLoggingFilter> =
                 FilterRegistrationBean<HeadersLoggingFilter>()
         registrationBean.setFilter(
-                HeadersLoggingFilter(userRepo)
+                HeadersLoggingFilter(userRepo,envConfig)
         )
         registrationBean.order = -1
         registrationBean.setName("fooBar")
