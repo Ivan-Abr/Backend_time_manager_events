@@ -1,6 +1,7 @@
 package com.example.application.service
-
+import com.example.application.dto.GetAllTagDTO
 import com.example.application.dto.TagCreateDTO
+import com.example.application.dto.TagDTO
 import com.example.application.dto.TagUpdateDTO
 import com.example.application.entity.Tag
 import com.example.application.repository.TagRepo
@@ -11,14 +12,57 @@ import java.util.*
 @Service
 class TagService(private var tagRepo: TagRepo, private val userRepo: UserRepo) {
 
-    fun getAllTags(userId: UUID): List<Tag> {
-        return tagRepo.findAllByUserId(userId)
+    fun getAllTags(
+            userId: UUID,
+            perPage: Optional<Int>,
+            page: Optional<Int>,
+            simpleFilter: Optional<String>,
+    ): GetAllTagDTO {
+        val page: Int = if (page.isEmpty) 0 else page.get()
+        val perPage: Int = if (perPage.isEmpty) 8 else perPage.get()
+        val simpleFilter: String = if (simpleFilter.isEmpty) "" else simpleFilter.get()
+
+        var tagInstances = tagRepo.findAllByUserId(userId).filter { tag: Tag ->
+            tag.tagName.contains(simpleFilter) || tag.tagDescription.contains(simpleFilter)
+        }
+
+        val tagInstancesAllAmount = tagInstances.size
+        tagInstances = if (tagInstances.isNotEmpty())
+            tagInstances.subList(
+                    page * perPage,
+                    if (tagInstances.size - 1 < (page + 1) * perPage)
+                        tagInstances.size - 1
+                    else (page + 1) * perPage)
+        else tagInstances
+        val tagDTOList = listOf<TagDTO>().toMutableList()
+        tagInstances.forEach { tagInstance ->
+            tagDTOList.add(TagDTO(
+                    tagId = tagInstance.tagId,
+                    tagName = tagInstance.tagName,
+                    tagColor = tagInstance.tagColor,
+                    tagDesc = tagInstance.tagDescription
+            ))
+        }
+        return GetAllTagDTO(
+                list = tagDTOList,
+                currentPage = page,
+                elementsPerPage = perPage,
+                totalElements = tagInstancesAllAmount,
+                totalPages = tagInstancesAllAmount / perPage
+        )
     }
 
-    fun findTagById(tagId: Long): Optional<Tag> {
+    fun findTagById(tagId: Long): TagDTO {
         if (!tagRepo.existsById(tagId))
             throw IllegalStateException("Tag with id $tagId does not exists")
-        return tagRepo.findById(tagId)
+        val tagInstance = tagRepo.findById(tagId).get()
+
+        return TagDTO(
+                tagId = tagInstance.tagId,
+                tagName = tagInstance.tagName,
+                tagColor = tagInstance.tagColor,
+                tagDesc = tagInstance.tagDescription
+        )
     }
 
     fun createTag(userId: UUID, tagCreateDTO: TagCreateDTO): Tag {
