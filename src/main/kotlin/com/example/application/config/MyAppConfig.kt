@@ -20,9 +20,9 @@ class MyAppConfig {
         registrationBean.setFilter(
                 HeadersLoggingFilter(userRepo)
         )
-        registrationBean.setOrder(-1)
+        registrationBean.order = -1
         registrationBean.setName("fooBar")
-        registrationBean.setUrlPatterns(listOf("/test/*", "/timemanager/*"))
+        registrationBean.setUrlPatterns(listOf("/timemanager/*"))
         return registrationBean
     }
 

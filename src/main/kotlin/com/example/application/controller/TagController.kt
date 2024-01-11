@@ -1,17 +1,15 @@
 package com.example.application.controller
 
+import USER_REQUEST_KEY
+import com.example.application.dto.EventCreateDTO
+import com.example.application.dto.EventUpdateDTO
+import com.example.application.dto.TagCreateDTO
+import com.example.application.dto.TagUpdateDTO
+import com.example.application.entity.Event
 import com.example.application.entity.Tag
 import com.example.application.service.TagService
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
@@ -19,8 +17,8 @@ import java.util.*
 class TagController(private var tagService: TagService) {
 
     @GetMapping()
-    fun getAllTags(): List<Tag> {
-        return tagService.getAllTags()
+    fun getAllTags(@RequestAttribute(USER_REQUEST_KEY) userId: UUID): List<Tag> {
+        return tagService.getAllTags(userId)
     }
 
     @GetMapping(path = ["{tagId}"])
@@ -29,25 +27,17 @@ class TagController(private var tagService: TagService) {
     }
 
     @PostMapping
-    fun registerNewTag(@RequestBody tag: Tag){
-        tagService.createNewTag(tag)
+    fun createTag(@RequestAttribute(USER_REQUEST_KEY) userId: UUID, @RequestBody tagCreateDTO: TagCreateDTO) : Tag {
+        return tagService.createTag(userId,tagCreateDTO)
     }
 
-    @PutMapping(path = ["{tagId}/name"])
-    fun changeTagName(@PathVariable("tagId") tagId: Long,
-                      @RequestParam(required = false) tagName: String){
-        tagService.updateTagName(tagId, tagName)
-    }
-
-
-    @PutMapping(path = ["{tagId}/desc"])
-    fun changeTagDesc(@PathVariable("tagId") tagId: Long,
-                      @RequestParam(required = false) tagDesc: String){
-        tagService.updateTagDesc(tagId, tagDesc)
+    @PatchMapping(path = ["{tagId}"])
+    fun updateTag(@RequestAttribute(USER_REQUEST_KEY) userId: UUID, @PathVariable("tagId") tagId: Long, @RequestBody tagUpdateDTO: TagUpdateDTO): Tag {
+        return tagService.updateTag(userId, tagId,tagUpdateDTO)
     }
 
     @DeleteMapping(path = ["{tagId}"])
-    fun deleteTagById(@PathVariable("tagId") tagId:Long){
-        return tagService.deleteTagById(tagId)
+    fun deleteTagById(@RequestAttribute(USER_REQUEST_KEY) userId: UUID, @PathVariable("tagId") tagId:Long){
+        return tagService.deleteTagById(userId,tagId)
     }
 }

@@ -34,8 +34,9 @@ class HeadersLoggingFilter(
             response: HttpServletResponse,
             filterChain: FilterChain,
     ) {
-        if (request.servletPath.contains("swagger") || request.servletPath.contains("openapi")) {
+        if (request.servletPath.contains("swagger") || request.servletPath.contains("api")) {
             filterChain.doFilter(request, response)
+            return
         }
         var token = ""
         token += request.getHeader("Authorization")
