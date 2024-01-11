@@ -1,8 +1,6 @@
 package com.example.application.config
 
-import com.example.application.TokenValidationInterceptor
 import org.springframework.context.annotation.Configuration
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration

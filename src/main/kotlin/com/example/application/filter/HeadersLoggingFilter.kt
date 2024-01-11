@@ -1,83 +1,112 @@
 package com.example.application.filter
 
+import USER_REQUEST_KEY
+import com.example.application.config.EnvConfig
+import com.example.application.entity.User
+import com.example.application.repository.UserRepo
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import lombok.extern.slf4j.Slf4j
+import org.json.JSONObject
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
-
+import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
+import java.util.*
 
-
-
-//@Component
 @Slf4j
-class HeadersLoggingFilter: OncePerRequestFilter() {
+@Component
+class HeadersLoggingFilter(
+        private var userRepo: UserRepo
+) : OncePerRequestFilter() {
+    private var serverAuthApiAddress: String = EnvConfig().SERVER_BACKEND_AUTH_API
 
     @Throws(IOException::class, ServletException::class)
     override fun doFilterInternal(
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-        filterChain: FilterChain
+            request: HttpServletRequest,
+            response: HttpServletResponse,
+            filterChain: FilterChain,
     ) {
-//        Collections.list(request.headerNames)
-//            .forEach { header ->
-//                println("Header: $header=${request.getHeader(header)}")
-//            }
-//        filterChain.doFilter(request, response)
-        var header = ""
-        header += request.getHeader("Authorization")
-        println(header)
-        var response2 = (sendGetRequestWithRestTemplate(header))
+        if (request.servletPath.contains("swagger") || request.servletPath.contains("openapi")) {
+            filterChain.doFilter(request, response)
+        }
+        var token = ""
+        token += request.getHeader("Authorization")
+        val response2 = (sendPostInternalAuthRequestWithRestTemplate(token))
         if (response2 is HttpClientErrorException) {
             response.status = HttpServletResponse.SC_UNAUTHORIZED
             return
         }
-        else {
-            filterChain.doFilter(request,response)
+        val responseGetUser = sendGetUserRequestWithRestTemplate(token)
+        if (responseGetUser is HttpClientErrorException) {
+            response.status = HttpServletResponse.SC_UNAUTHORIZED
+            return
+        }
+        if (responseGetUser is ResponseEntity<*>) {
+            val tmp: String = responseGetUser.body.toString()
+            try {
+                if (!userRepo.existsById(UUID.fromString(JSONObject(tmp).get("id") as String))) {
+                    println("govnon")
+                    throw IllegalStateException("User with this id does not exists")
+                }
+            } catch (error: Throwable) {
+                userRepo.save(User(
+                        userId = UUID.fromString(JSONObject(tmp).get("id") as String),
+                        events = null
+                ))
+            }
+            request.setAttribute(USER_REQUEST_KEY, UUID.fromString(JSONObject(tmp).get("id") as String))
+        } else {
+            response.status = HttpServletResponse.SC_UNAUTHORIZED
+            return
         }
 
-
+        filterChain.doFilter(request, response)
     }
 
-
-
-//    fun sendGetRequest() {
-//        val restTemplate = RestTemplate()
-//        val response = restTemplate.getForObject("http://localhost:8081/dm/v1/answer/all/org/1", String::class.java)
-//        println("Response: $response")
-//    }
-
-
-    fun sendGetRequestWithRestTemplate(token: String): Any {
+    private fun sendGetUserRequestWithRestTemplate(token: String): Any {
         val restTemplate = RestTemplate()
         val headers = HttpHeaders()
-        headers.set("Authorization", "$token")
-
+        headers.set("Authorization", token)
         val entity = HttpEntity<String>(headers)
 
-        try {
+        return try {
             val response = restTemplate.exchange(
-                "http://85.175.194.251:50443/api/auth-service/auth/internal-auth",
-                HttpMethod.POST,
-                entity,
-                String::class.java
+                    "$serverAuthApiAddress/user/me",
+                    HttpMethod.GET,
+                    entity,
+                    String::class.java
             )
-            return response
+            response
         } catch (e: HttpClientErrorException) {
-            return e
+            e
         }
     }
 
+    private fun sendPostInternalAuthRequestWithRestTemplate(token: String): Any {
+        val restTemplate = RestTemplate()
+        val headers = HttpHeaders()
+        headers.set("Authorization", token)
+        val entity = HttpEntity<String>(headers)
 
-
-
+        return try {
+            val response = restTemplate.exchange(
+                    "$serverAuthApiAddress/auth/internal-auth",
+                    HttpMethod.POST,
+                    entity,
+                    String::class.java
+            )
+            response
+        } catch (e: HttpClientErrorException) {
+            e
+        }
+    }
 
 }

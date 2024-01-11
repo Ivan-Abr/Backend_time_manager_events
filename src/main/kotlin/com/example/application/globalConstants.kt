@@ -1,0 +1,1 @@
+const val USER_REQUEST_KEY = "currentUserId"

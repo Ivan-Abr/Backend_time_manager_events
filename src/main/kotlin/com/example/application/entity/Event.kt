@@ -1,6 +1,4 @@
 package com.example.application.entity
-
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*
 import java.time.LocalDate
@@ -37,10 +35,5 @@ data class Event(
     @ManyToOne
     @JoinColumn(name = "user_id")
     var user:User?,
-
-
-    @OneToMany(mappedBy="event")
-    @JsonIgnore
-    var notes: Set<Notification>?
 
 )

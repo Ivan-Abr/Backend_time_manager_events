@@ -1,6 +1,8 @@
 package com.example.application.config
 
 import com.example.application.filter.HeadersLoggingFilter
+import com.example.application.repository.UserRepo
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -8,14 +10,19 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class MyAppConfig {
 
+    @Autowired
+    private lateinit var userRepo: UserRepo
+
     @Bean
     fun registrationBean(): FilterRegistrationBean<HeadersLoggingFilter>? {
         val registrationBean: FilterRegistrationBean<HeadersLoggingFilter> =
-            FilterRegistrationBean<HeadersLoggingFilter>()
-        registrationBean.setFilter(HeadersLoggingFilter())
+                FilterRegistrationBean<HeadersLoggingFilter>()
+        registrationBean.setFilter(
+                HeadersLoggingFilter(userRepo)
+        )
         registrationBean.setOrder(-1)
         registrationBean.setName("fooBar")
-        registrationBean.setUrlPatterns(listOf("/test/*", "/timemanager/*",""))
+        registrationBean.setUrlPatterns(listOf("/test/*", "/timemanager/*"))
         return registrationBean
     }
 
