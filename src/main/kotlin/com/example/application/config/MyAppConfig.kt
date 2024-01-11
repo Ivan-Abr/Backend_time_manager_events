@@ -1,12 +1,9 @@
 package com.example.application.config
-
 import com.example.application.filter.HeadersLoggingFilter
 import com.example.application.repository.UserRepo
 import io.swagger.v3.oas.annotations.ExternalDocumentation
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
-import io.swagger.v3.oas.annotations.security.SecurityScheme
 import io.swagger.v3.oas.annotations.servers.Server
-import io.swagger.v3.oas.models.Components
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean

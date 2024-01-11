@@ -36,6 +36,4 @@ data class Event(
         @ManyToOne
         @JoinColumn(name = "user_id")
         var user: User?,
-) {
-
-}
+)
