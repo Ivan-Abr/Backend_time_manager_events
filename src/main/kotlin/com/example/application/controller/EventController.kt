@@ -19,9 +19,10 @@ class EventController(private var eventService: EventService) {
             @RequestAttribute(USER_REQUEST_KEY) userId: UUID,
             @RequestParam("perPage") perPage: Optional<Int>,
             @RequestParam("page") page: Optional<Int>,
-            @RequestParam("simpleFilter") simpleFilter: Optional<String>
+            @RequestParam("simpleFilter") simpleFilter: Optional<String>,
+            @RequestParam("tagFilter") tagFilter: Optional<Long>
     ): GetAllEventDTO {
-        return eventService.getAllEvents(userId,perPage, page, simpleFilter)
+        return eventService.getAllEvents(userId,perPage, page, simpleFilter, tagFilter)
     }
 
     @GetMapping(path = ["{eventId}"])

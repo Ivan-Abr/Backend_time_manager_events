@@ -20,12 +20,21 @@ class EventService(private var eventRepo: EventRepo,
             perPage: Optional<Int>,
             page: Optional<Int>,
             simpleFilter: Optional<String>,
+            tagFilter: Optional<Long>
     ): GetAllEventDTO {
         val page: Int = if (page.isEmpty) 0 else page.get()
         val perPage: Int = if (perPage.isEmpty) 8 else perPage.get()
-        val simpleFilter: String = if (simpleFilter.isEmpty) "" else simpleFilter.get()
+        val simpleFilter: String = if (simpleFilter.isEmpty) "" else simpleFilter.get().lowercase()
         var eventInstances = eventRepo.findAllByUserId(userId).filter { event: Event ->
-            event.eventName.contains(simpleFilter) || event.eventDesc.contains(simpleFilter)
+            event.eventName.lowercase().contains(simpleFilter) || event.eventDesc.lowercase().contains(simpleFilter)
+        }
+        if (!tagFilter.isEmpty ) {
+            val tagFilter = tagFilter.get()
+            eventInstances = eventInstances.filter { event: Event ->
+                event.tags!!.map { tag:Tag ->
+                    tag.tagId
+                }.contains(tagFilter)
+            }
         }
         val eventInstancesAllAmount = eventInstances.size
         eventInstances = if (eventInstances.isNotEmpty())

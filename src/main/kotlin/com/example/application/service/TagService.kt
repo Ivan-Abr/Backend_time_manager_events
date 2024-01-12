@@ -20,10 +20,10 @@ class TagService(private var tagRepo: TagRepo, private val userRepo: UserRepo) {
     ): GetAllTagDTO {
         val page: Int = if (page.isEmpty) 0 else page.get()
         val perPage: Int = if (perPage.isEmpty) 8 else perPage.get()
-        val simpleFilter: String = if (simpleFilter.isEmpty) "" else simpleFilter.get()
+        val simpleFilter: String = if (simpleFilter.isEmpty) "" else simpleFilter.get().lowercase()
 
         var tagInstances = tagRepo.findAllByUserId(userId).filter { tag: Tag ->
-            tag.tagName.contains(simpleFilter) || tag.tagDescription.contains(simpleFilter)
+            tag.tagName.lowercase().contains(simpleFilter) || tag.tagDescription.lowercase().contains(simpleFilter)
         }
 
         val tagInstancesAllAmount = tagInstances.size
