@@ -4,6 +4,7 @@ import USER_REQUEST_KEY
 import com.example.application.dto.EventCreateDTO
 import com.example.application.dto.EventDTO
 import com.example.application.dto.EventUpdateDTO
+import com.example.application.dto.GetAllEventDTO
 import com.example.application.dto.TagUpdateDTO
 import com.example.application.entity.Event
 import com.example.application.entity.Tag
@@ -33,9 +34,13 @@ class EventController(private var eventService: EventService) {
         ApiResponse(responseCode = "404", description = "События не найдены", content = [Content()]),)
     @GetMapping()
     fun getAllEvents(
-        @Parameter(description = "id пользователя")
-        @RequestAttribute(USER_REQUEST_KEY) userId: UUID): List<EventDTO> {
-        return eventService.getAllEvents(userId)
+            @RequestAttribute(USER_REQUEST_KEY) userId: UUID,
+            @RequestParam("perPage") perPage: Optional<Int>,
+            @RequestParam("page") page: Optional<Int>,
+            @RequestParam("simpleFilter") simpleFilter: Optional<String>,
+            @RequestParam("tagFilter") tagFilter: Optional<Long>
+    ): GetAllEventDTO {
+        return eventService.getAllEvents(userId,perPage, page, simpleFilter, tagFilter)
     }
 
     @Operation(summary = "Вывод события по его id")

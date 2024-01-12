@@ -1,7 +1,6 @@
 package com.example.application.service
-import com.example.application.dto.EventCreateDTO
-import com.example.application.dto.EventDTO
-import com.example.application.dto.EventUpdateDTO
+
+import com.example.application.dto.*
 import com.example.application.entity.Event
 import com.example.application.entity.Tag
 import com.example.application.repository.EventRepo
@@ -10,43 +9,86 @@ import com.example.application.repository.UserRepo
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.util.*
-import kotlin.collections.HashSet
 
 @Service
 class EventService(private var eventRepo: EventRepo,
                    private var userRepo: UserRepo,
                    private var tagRepo: TagRepo) {
 
-    fun getAllEvents(userId: UUID): List<EventDTO> {
-        val eventInstances = eventRepo.findAllByUserId(userId)
+    fun getAllEvents(
+            userId: UUID,
+            perPage: Optional<Int>,
+            page: Optional<Int>,
+            simpleFilter: Optional<String>,
+            tagFilter: Optional<Long>
+    ): GetAllEventDTO {
+        val page: Int = if (page.isEmpty) 0 else page.get()
+        val perPage: Int = if (perPage.isEmpty) 8 else perPage.get()
+        val simpleFilter: String = if (simpleFilter.isEmpty) "" else simpleFilter.get().lowercase()
+        var eventInstances = eventRepo.findAllByUserId(userId).filter { event: Event ->
+            event.eventName.lowercase().contains(simpleFilter) || event.eventDesc.lowercase().contains(simpleFilter)
+        }
+        if (!tagFilter.isEmpty ) {
+            val tagFilter = tagFilter.get()
+            eventInstances = eventInstances.filter { event: Event ->
+                event.tags!!.map { tag:Tag ->
+                    tag.tagId
+                }.contains(tagFilter)
+            }
+        }
+        val eventInstancesAllAmount = eventInstances.size
+        eventInstances = if (eventInstances.isNotEmpty())
+            eventInstances.subList(
+                    page * perPage,
+                    if (eventInstances.size - 1 < (page + 1) * perPage)
+                        eventInstances.size
+                    else (page + 1) * perPage)
+        else eventInstances
         val eventDTOList = listOf<EventDTO>().toMutableList()
         eventInstances.forEach { eventInstance ->
-            val tagIdCollection : MutableList<Long> = mutableListOf()
-            eventInstance.tags?.forEach {tagInstance ->
-                println(tagInstance.tagId.toString())
-                tagIdCollection.add(tagInstance.tagId)
+            println(eventInstance.eventName)
+            val tagDTOCollection: MutableList<TagDTO> = mutableListOf()
+            eventInstance.tags?.forEach {
+                println(it.tagId.toString())
+                tagDTOCollection.add(TagDTO(
+                        tagId = it.tagId,
+                        tagColor = it.tagColor,
+                        tagDesc = it.tagDescription,
+                        tagName = it.tagName
+                ))
             }
             eventDTOList.add(EventDTO(
                     eventId = eventInstance.eventId,
                     eventDesc = eventInstance.eventDesc,
                     eventDate = eventInstance.eventDate.toString(),
                     eventName = eventInstance.eventName,
-                    tags = tagIdCollection
+                    tags = tagDTOCollection
             ))
         }
-        return eventDTOList
+        return GetAllEventDTO(
+                list = eventDTOList,
+                currentPage = page,
+                elementsPerPage = perPage,
+                totalElements = eventInstancesAllAmount,
+                totalPages = eventInstancesAllAmount / perPage
+        )
     }
 
     fun findEventById(userId: UUID, eventId: Long): EventDTO {
         if (!eventRepo.existsById(eventId))
             throw IllegalStateException("Event with id $eventId does not exists")
         val eventInstance = eventRepo.findEventByUserIdAndEventId(userId, eventId).get()
-        val tagIdCollection : MutableList<Long> = mutableListOf()
+        val tagDTOCollection: MutableList<TagDTO> = mutableListOf()
 
         println(eventInstance.tags?.size.toString())
         eventInstance.tags?.forEach {
             println(it.tagId.toString())
-            tagIdCollection.add(it.tagId)
+            tagDTOCollection.add(TagDTO(
+                    tagId = it.tagId,
+                    tagColor = it.tagColor,
+                    tagDesc = it.tagDescription,
+                    tagName = it.tagName
+            ))
         }
 
         return EventDTO(
@@ -54,7 +96,7 @@ class EventService(private var eventRepo: EventRepo,
                 eventDesc = eventInstance.eventDesc,
                 eventDate = eventInstance.eventDate.toString(),
                 eventName = eventInstance.eventName,
-                tags = tagIdCollection
+                tags = tagDTOCollection
         )
     }
 
@@ -86,6 +128,8 @@ class EventService(private var eventRepo: EventRepo,
             throw Exception("This user not allowed to use this event")
         }
 
+        println(eventInstance.eventId)
+
         if (eventUpdateDTO.eventDate is LocalDate) {
             eventInstance.eventDate = eventUpdateDTO.eventDate!!
         }
@@ -96,7 +140,6 @@ class EventService(private var eventRepo: EventRepo,
             eventInstance.eventName = eventUpdateDTO.eventName!!
         }
         if (eventUpdateDTO.tags is Collection<*>) {
-            println("here")
             val newListTags: MutableList<Tag> = listOf<Tag>().toMutableList()
             eventUpdateDTO.tags?.forEach {
                 println(it.toString())

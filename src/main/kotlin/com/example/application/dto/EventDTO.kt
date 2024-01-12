@@ -1,5 +1,6 @@
 package com.example.application.dto
 
+import com.example.application.entity.Tag
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.gson.annotations.SerializedName
 import java.time.LocalDate
@@ -18,5 +19,5 @@ data class EventDTO(
         @SerializedName("eventDate") var eventDate: String,
 
         @JsonProperty("tags")
-        @SerializedName("tags") var tags: Collection<Long>? = null
+        @SerializedName("tags") var tags: List<TagDTO>? = null
 )

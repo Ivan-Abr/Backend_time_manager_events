@@ -1,6 +1,8 @@
 package com.example.application.controller
 
 import USER_REQUEST_KEY
+import com.example.application.dto.*
+import com.example.application.entity.Event
 import com.example.application.dto.TagCreateDTO
 import com.example.application.dto.TagUpdateDTO
 import com.example.application.entity.Tag
@@ -34,9 +36,12 @@ class TagController(private var tagService: TagService) {
         )
     @GetMapping()
     fun getAllTags(
-        @Parameter(description = "id пользователя")
-        @RequestAttribute(USER_REQUEST_KEY) userId: UUID): List<Tag> {
-        return tagService.getAllTags(userId)
+            @RequestAttribute(USER_REQUEST_KEY) userId: UUID,
+            @RequestParam("perPage") perPage: Optional<Int>,
+            @RequestParam("page") page: Optional<Int>,
+            @RequestParam("simpleFilter") simpleFilter: Optional<String>
+    ): GetAllTagDTO {
+        return tagService.getAllTags(userId,perPage, page, simpleFilter)
     }
 
     @Operation(summary = "Вывод тега по его id")
@@ -48,7 +53,7 @@ class TagController(private var tagService: TagService) {
         ApiResponse(responseCode = "401", description = "Токен не валидный", content = [Content()]),
         ApiResponse(responseCode = "500", description = "Тега не существует", content = [Content()]))
     @GetMapping(path = ["{tagId}"])
-    fun getTagById(@PathVariable("tagId") tagId:Long): Optional<Tag> {
+    fun getTagById(@PathVariable("tagId") tagId: Long): TagDTO {
         return tagService.findTagById(tagId)
     }
 
@@ -89,7 +94,6 @@ class TagController(private var tagService: TagService) {
             schema = Schema(implementation = TagUpdateDTO::class))
         @RequestBody tagUpdateDTO: TagUpdateDTO): Tag {
         return tagService.updateTag(userId, tagId,tagUpdateDTO)
-    }
 
     @Operation(summary = "Удаление существующего тега")
     @ApiResponses(
@@ -104,5 +108,4 @@ class TagController(private var tagService: TagService) {
         @Parameter(description = "id тега")
         @PathVariable("tagId") tagId:Long){
         return tagService.deleteTagById(userId,tagId)
-    }
 }

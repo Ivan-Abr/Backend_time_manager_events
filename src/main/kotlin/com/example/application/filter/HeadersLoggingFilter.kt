@@ -35,6 +35,13 @@ class HeadersLoggingFilter(
             response: HttpServletResponse,
             filterChain: FilterChain,
     ) {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        if (request.method == "OPTIONS") {
+            response.setHeader("Access-Control-Allow-Headers", "*");
+            response.setHeader("Access-Control-Allow-Methods", "*");
+            filterChain.doFilter(request, response)
+            return
+        }
         if (request.servletPath.contains("swagger") || request.servletPath.contains("api")) {
             filterChain.doFilter(request, response)
             return
@@ -55,7 +62,6 @@ class HeadersLoggingFilter(
             val tmp: String = responseGetUser.body.toString()
             try {
                 if (!userRepo.existsById(UUID.fromString(JSONObject(tmp).get("id") as String))) {
-                    println("govnon")
                     throw IllegalStateException("User with this id does not exists")
                 }
             } catch (error: Throwable) {
@@ -69,7 +75,7 @@ class HeadersLoggingFilter(
             response.status = HttpServletResponse.SC_UNAUTHORIZED
             return
         }
-
+        response.setHeader("Access-Control-Allow-Origin", "*");
         filterChain.doFilter(request, response)
     }
 
