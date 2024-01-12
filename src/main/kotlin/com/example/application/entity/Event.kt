@@ -3,6 +3,7 @@ package com.example.application.entity
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 
 @Entity
@@ -24,7 +25,7 @@ data class Event(
 
         @JsonProperty("event_date")
         @Column(name = "event_date" , nullable = true)
-        var eventDate: LocalDate? = null,
+        var eventDate: LocalDateTime? = null,
 
         @JsonProperty("event_completion")
         @Column(name = "event_completion")

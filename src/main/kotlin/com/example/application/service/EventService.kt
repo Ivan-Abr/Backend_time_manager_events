@@ -8,6 +8,7 @@ import com.example.application.repository.TagRepo
 import com.example.application.repository.UserRepo
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 
 @Service
@@ -60,7 +61,7 @@ class EventService(private var eventRepo: EventRepo,
             eventDTOList.add(EventDTO(
                     eventId = eventInstance.eventId,
                     eventDesc = eventInstance.eventDesc,
-                    eventDate = eventInstance.eventDate.toString(),
+                    eventDate = eventInstance.eventDate.let {if (it !== null) it.toString() else it},
                     eventName = eventInstance.eventName,
                     tags = tagDTOCollection,
                     eventCompletion = eventInstance.eventCompletion
@@ -95,7 +96,7 @@ class EventService(private var eventRepo: EventRepo,
         return EventDTO(
                 eventId = eventInstance.eventId,
                 eventDesc = eventInstance.eventDesc,
-                eventDate = eventInstance.eventDate.toString(),
+                eventDate = eventInstance.eventDate.let {if (it !== null) it.toString() else it},
                 eventName = eventInstance.eventName,
                 tags = tagDTOCollection,
                 eventCompletion = eventInstance.eventCompletion
@@ -133,7 +134,7 @@ class EventService(private var eventRepo: EventRepo,
 
         println(eventInstance.eventId)
 
-        if (eventUpdateDTO.eventDate is LocalDate) {
+        if (eventUpdateDTO.eventDate is LocalDateTime) {
             eventInstance.eventDate = eventUpdateDTO.eventDate!!
         }
         if (eventUpdateDTO.eventDesc is String) {

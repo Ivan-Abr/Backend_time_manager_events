@@ -3,6 +3,7 @@ package com.example.application.dto
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.gson.annotations.SerializedName
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class EventCreateDTO(
         @JsonProperty("eventName")
@@ -12,7 +13,7 @@ data class EventCreateDTO(
         @SerializedName("eventDesc") var eventDesc: String? = null,
 
         @JsonProperty("eventDate")
-        @SerializedName("eventDate") var eventDate: LocalDate? = null,
+        @SerializedName("eventDate") var eventDate: LocalDateTime? = null,
 
         @JsonProperty("eventCompletion")
         @SerializedName("eventCompletion") var eventCompletion: Boolean,
