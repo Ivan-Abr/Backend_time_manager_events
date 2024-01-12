@@ -35,11 +35,12 @@ class EventService(private var eventRepo: EventRepo,
             eventInstances.subList(
                     page * perPage,
                     if (eventInstances.size - 1 < (page + 1) * perPage)
-                        eventInstances.size - 1
+                        eventInstances.size
                     else (page + 1) * perPage)
         else eventInstances
         val eventDTOList = listOf<EventDTO>().toMutableList()
         eventInstances.forEach { eventInstance ->
+            println(eventInstance.eventName)
             val tagIdCollection: MutableList<Long> = mutableListOf()
             eventInstance.tags?.forEach { tagInstance ->
                 println(tagInstance.tagId.toString())
@@ -111,6 +112,8 @@ class EventService(private var eventRepo: EventRepo,
             throw Exception("This user not allowed to use this event")
         }
 
+        println(eventInstance.eventId)
+
         if (eventUpdateDTO.eventDate is LocalDate) {
             eventInstance.eventDate = eventUpdateDTO.eventDate!!
         }
@@ -121,7 +124,6 @@ class EventService(private var eventRepo: EventRepo,
             eventInstance.eventName = eventUpdateDTO.eventName!!
         }
         if (eventUpdateDTO.tags is Collection<*>) {
-            println("here")
             val newListTags: MutableList<Tag> = listOf<Tag>().toMutableList()
             eventUpdateDTO.tags?.forEach {
                 println(it.toString())
