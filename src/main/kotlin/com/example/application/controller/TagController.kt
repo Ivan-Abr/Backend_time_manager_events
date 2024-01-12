@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 
 @RestController
 @RequestMapping("timemanager/tag")
-@SecurityRequirement(name = "bearerAuth")
+//@SecurityRequirement(name = "bearerAuth")
 
 class TagController(private var tagService: TagService) {
 

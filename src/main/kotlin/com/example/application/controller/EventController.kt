@@ -29,9 +29,7 @@ class EventController(private var eventService: EventService) {
             mediaType = "application/json",
             array = ArraySchema(schema = Schema(implementation = Tag::class))
         )]),
-        ApiResponse(responseCode = "404", description = "События не найдены", content = [Content()]),
-        ApiResponse(responseCode = "", description = "", content = [Content()])
-    )
+        ApiResponse(responseCode = "404", description = "События не найдены", content = [Content()]),)
     @GetMapping()
     fun getAllEvents(
         @Parameter(description = "id пользователя")
@@ -45,7 +43,7 @@ class EventController(private var eventService: EventService) {
             mediaType = "application/json",
             array = ArraySchema(schema = Schema(implementation = Tag::class)))]),
         ApiResponse(responseCode = "400", description = "Введен неверный id", content = [Content()]),
-        ApiResponse(responseCode = "404", description = "Событие не найдено", content = [Content()]))
+        ApiResponse(responseCode = "500", description = "Событие не найдено", content = [Content()]))
     @GetMapping(path = ["{eventId}"])
     fun getEventById(
         @Parameter(description = "id пользователя")
@@ -56,6 +54,12 @@ class EventController(private var eventService: EventService) {
         return eventService.findEventById(userId, eventId)
     }
 
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "Событие найдено", content = [Content(
+            mediaType = "application/json",
+            array = ArraySchema(schema = Schema(implementation = Tag::class)))]),
+        ApiResponse(responseCode = "400", description = "Введены неверные данные", content = [Content()]),
+        ApiResponse(responseCode = "500", description = "Событие не найдено", content = [Content()]))
     @Operation(summary = "Создание нового события")
     @PostMapping
     fun registerEvent(
@@ -71,6 +75,12 @@ class EventController(private var eventService: EventService) {
 
 
     @Operation(summary = "Обновление полей существующего события")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "Событие найдено", content = [Content(
+            mediaType = "application/json",
+            array = ArraySchema(schema = Schema(implementation = Tag::class)))]),
+        ApiResponse(responseCode = "400", description = "Введены неверные данные", content = [Content()]),
+        ApiResponse(responseCode = "500", description = "Событие не найдено", content = [Content()]))
     @PatchMapping(path = ["{eventId}"])
     fun updateEvent(
         @Parameter(description = "id события")
@@ -85,6 +95,9 @@ class EventController(private var eventService: EventService) {
     }
 
 
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "Событие найдено", content = [Content()]),
+        ApiResponse(responseCode = "500", description = "Событие не найдено", content = [Content()]))
     @Operation(summary = "Удаление существующего события")
     @DeleteMapping(path = ["{eventId}"])
     fun deleteEventById(
