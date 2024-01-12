@@ -29,6 +29,7 @@ class TagController(private var tagService: TagService) {
         ApiResponse(responseCode = "200", description = "Теги найдены", content = [Content(
             mediaType = "application/json",
             array = ArraySchema(schema = Schema(implementation = Tag::class)))]),
+        ApiResponse(responseCode = "401", description = "Токен не валидный", content = [Content()]),
         ApiResponse(responseCode = "404", description = "Теги не найдены", content = [Content()]),
         )
     @GetMapping()
@@ -44,6 +45,7 @@ class TagController(private var tagService: TagService) {
             mediaType = "application/json",
             array = ArraySchema(schema = Schema(implementation = Tag::class)))]),
         ApiResponse(responseCode = "400", description = "Введен неверный id", content = [Content()]),
+        ApiResponse(responseCode = "401", description = "Токен не валидный", content = [Content()]),
         ApiResponse(responseCode = "500", description = "Тега не существует", content = [Content()]))
     @GetMapping(path = ["{tagId}"])
     fun getTagById(@PathVariable("tagId") tagId:Long): Optional<Tag> {
@@ -55,7 +57,8 @@ class TagController(private var tagService: TagService) {
         ApiResponse(responseCode = "200", description = "Тег создан", content = [Content(
             mediaType = "application/json",
             array = ArraySchema(schema = Schema(implementation = Tag::class)))]),
-        ApiResponse(responseCode = "400", description = "Введены неверные данные", content = [Content()]),)
+        ApiResponse(responseCode = "400", description = "Введены неверные данные", content = [Content()]),
+        ApiResponse(responseCode = "401", description = "Токен не валидный", content = [Content()]),)
     @PostMapping
     fun createTag(@Parameter(description = "id пользователя ")
         @RequestAttribute(USER_REQUEST_KEY) userId: UUID,
@@ -72,6 +75,7 @@ class TagController(private var tagService: TagService) {
             mediaType = "application/json",
             array = ArraySchema(schema = Schema(implementation = Tag::class)))]),
         ApiResponse(responseCode = "400", description = "Введены неверные данные", content = [Content()]),
+        ApiResponse(responseCode = "401", description = "Токен не валидный", content = [Content()]),
         ApiResponse(responseCode = "500", description = "Тега не существует", content = [Content()]))
     @PatchMapping(path = ["{tagId}"])
     fun updateTag(
@@ -90,6 +94,7 @@ class TagController(private var tagService: TagService) {
     @Operation(summary = "Удаление существующего тега")
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "Тег удален", content = [Content()]),
+        ApiResponse(responseCode = "401", description = "Токен не валидный", content = [Content()]),
         ApiResponse(responseCode = "500", description = "Тега не существует", content = [Content()]))
     @DeleteMapping(path = ["{tagId}"])
     fun deleteTagById(
