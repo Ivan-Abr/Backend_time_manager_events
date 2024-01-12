@@ -9,10 +9,10 @@ data class EventCreateDTO(
         @SerializedName("eventName") var eventName: String,
 
         @JsonProperty("eventDesc")
-        @SerializedName("eventDesc") var eventDesc: String,
+        @SerializedName("eventDesc") var eventDesc: String? = null,
 
         @JsonProperty("eventDate")
-        @SerializedName("eventDate") var eventDate: LocalDate,
+        @SerializedName("eventDate") var eventDate: LocalDate? = null,
 
         @JsonProperty("eventCompletion")
         @SerializedName("eventCompletion") var eventCompletion: Boolean,

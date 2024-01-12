@@ -26,7 +26,7 @@ class EventService(private var eventRepo: EventRepo,
         val perPage: Int = if (perPage.isEmpty) 8 else perPage.get()
         val simpleFilter: String = if (simpleFilter.isEmpty) "" else simpleFilter.get().lowercase()
         var eventInstances = eventRepo.findAllByUserId(userId).filter { event: Event ->
-            event.eventName.lowercase().contains(simpleFilter) || event.eventDesc.lowercase().contains(simpleFilter)
+            event.eventName.lowercase().contains(simpleFilter) || event.eventDesc?.lowercase()?.contains(simpleFilter) ?: false
         }
         if (!tagFilter.isEmpty ) {
             val tagFilter = tagFilter.get()

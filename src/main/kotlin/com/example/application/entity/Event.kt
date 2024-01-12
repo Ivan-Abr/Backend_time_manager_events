@@ -19,12 +19,12 @@ data class Event(
         var eventName: String,
 
         @JsonProperty("event_desc")
-        @Column(name = "event_desc")
-        var eventDesc: String,
+        @Column(name = "event_desc", nullable = true)
+        var eventDesc: String? = null,
 
         @JsonProperty("event_date")
-        @Column(name = "event_date")
-        var eventDate: LocalDate,
+        @Column(name = "event_date" , nullable = true)
+        var eventDate: LocalDate? = null,
 
         @JsonProperty("event_completion")
         @Column(name = "event_completion")

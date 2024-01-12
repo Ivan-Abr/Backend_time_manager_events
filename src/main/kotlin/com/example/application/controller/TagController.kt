@@ -47,7 +47,7 @@ class TagController(private var tagService: TagService) {
     @ApiResponses(
             ApiResponse(responseCode = "200", description = "Тег найден", content = [Content(
                     mediaType = "application/json",
-                    array = ArraySchema(schema = Schema(implementation = Tag::class)))]),
+                    array = ArraySchema(schema = Schema(implementation = GetAllTagDTO::class)))]),
             ApiResponse(responseCode = "400", description = "Введен неверный id", content = [Content()]),
             ApiResponse(responseCode = "401", description = "Токен не валидный", content = [Content()]),
             ApiResponse(responseCode = "500", description = "Тега не существует", content = [Content()]))
@@ -60,7 +60,7 @@ class TagController(private var tagService: TagService) {
     @ApiResponses(
             ApiResponse(responseCode = "200", description = "Тег создан", content = [Content(
                     mediaType = "application/json",
-                    array = ArraySchema(schema = Schema(implementation = Tag::class)))]),
+                    array = ArraySchema(schema = Schema(implementation = TagDTO::class)))]),
             ApiResponse(responseCode = "400", description = "Введены неверные данные", content = [Content()]),
             ApiResponse(responseCode = "401", description = "Токен не валидный", content = [Content()]),
     )
