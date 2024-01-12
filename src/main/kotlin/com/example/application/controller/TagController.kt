@@ -14,9 +14,13 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
+
 
 @RestController
 @RequestMapping("timemanager/tag")
+@SecurityRequirement(name = "bearerAuth")
+
 class TagController(private var tagService: TagService) {
 
 
