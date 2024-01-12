@@ -62,7 +62,8 @@ class EventService(private var eventRepo: EventRepo,
                     eventDesc = eventInstance.eventDesc,
                     eventDate = eventInstance.eventDate.toString(),
                     eventName = eventInstance.eventName,
-                    tags = tagDTOCollection
+                    tags = tagDTOCollection,
+                    eventCompletion = eventInstance.eventCompletion
             ))
         }
         return GetAllEventDTO(
@@ -96,7 +97,8 @@ class EventService(private var eventRepo: EventRepo,
                 eventDesc = eventInstance.eventDesc,
                 eventDate = eventInstance.eventDate.toString(),
                 eventName = eventInstance.eventName,
-                tags = tagDTOCollection
+                tags = tagDTOCollection,
+                eventCompletion = eventInstance.eventCompletion
         )
     }
 
@@ -115,6 +117,7 @@ class EventService(private var eventRepo: EventRepo,
                 eventDesc = eventCreateDTO.eventDesc,
                 tags = newListTags,
                 user = userInstance,
+                eventCompletion = eventCreateDTO.eventCompletion
         )
 
         return eventRepo.save(eventInstance)
@@ -138,6 +141,9 @@ class EventService(private var eventRepo: EventRepo,
         }
         if (eventUpdateDTO.eventName is String) {
             eventInstance.eventName = eventUpdateDTO.eventName!!
+        }
+        if (eventUpdateDTO.eventCompletion is Boolean) {
+            eventInstance.eventCompletion = eventUpdateDTO.eventCompletion!!
         }
         if (eventUpdateDTO.tags is Collection<*>) {
             val newListTags: MutableList<Tag> = listOf<Tag>().toMutableList()

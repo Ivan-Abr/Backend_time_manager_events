@@ -26,6 +26,10 @@ data class Event(
         @Column(name = "event_date")
         var eventDate: LocalDate,
 
+        @JsonProperty("event_completion")
+        @Column(name = "event_completion")
+        var eventCompletion: Boolean,
+
         @ManyToMany(fetch = FetchType.LAZY)
         @JoinTable(
                 name = "tag_event",

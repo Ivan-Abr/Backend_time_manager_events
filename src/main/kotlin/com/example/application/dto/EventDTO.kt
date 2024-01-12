@@ -18,6 +18,9 @@ data class EventDTO(
         @JsonProperty("eventDate")
         @SerializedName("eventDate") var eventDate: String,
 
+        @JsonProperty("eventCompletion")
+        @SerializedName("eventCompletion") var eventCompletion: Boolean,
+
         @JsonProperty("tags")
         @SerializedName("tags") var tags: List<TagDTO>? = null
 )
