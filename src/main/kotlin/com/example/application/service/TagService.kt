@@ -31,7 +31,7 @@ class TagService(private var tagRepo: TagRepo, private val userRepo: UserRepo) {
             tagInstances.subList(
                     page * perPage,
                     if (tagInstances.size - 1 < (page + 1) * perPage)
-                        tagInstances.size - 1
+                        tagInstances.size
                     else (page + 1) * perPage)
         else tagInstances
         val tagDTOList = listOf<TagDTO>().toMutableList()

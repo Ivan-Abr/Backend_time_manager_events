@@ -1,9 +1,6 @@
 package com.example.application.service
 
-import com.example.application.dto.EventCreateDTO
-import com.example.application.dto.EventDTO
-import com.example.application.dto.EventUpdateDTO
-import com.example.application.dto.GetAllEventDTO
+import com.example.application.dto.*
 import com.example.application.entity.Event
 import com.example.application.entity.Tag
 import com.example.application.repository.EventRepo
@@ -41,17 +38,22 @@ class EventService(private var eventRepo: EventRepo,
         val eventDTOList = listOf<EventDTO>().toMutableList()
         eventInstances.forEach { eventInstance ->
             println(eventInstance.eventName)
-            val tagIdCollection: MutableList<Long> = mutableListOf()
-            eventInstance.tags?.forEach { tagInstance ->
-                println(tagInstance.tagId.toString())
-                tagIdCollection.add(tagInstance.tagId)
+            val tagDTOCollection: MutableList<TagDTO> = mutableListOf()
+            eventInstance.tags?.forEach {
+                println(it.tagId.toString())
+                tagDTOCollection.add(TagDTO(
+                        tagId = it.tagId,
+                        tagColor = it.tagColor,
+                        tagDesc = it.tagDescription,
+                        tagName = it.tagName
+                ))
             }
             eventDTOList.add(EventDTO(
                     eventId = eventInstance.eventId,
                     eventDesc = eventInstance.eventDesc,
                     eventDate = eventInstance.eventDate.toString(),
                     eventName = eventInstance.eventName,
-                    tags = tagIdCollection
+                    tags = tagDTOCollection
             ))
         }
         return GetAllEventDTO(
@@ -67,12 +69,17 @@ class EventService(private var eventRepo: EventRepo,
         if (!eventRepo.existsById(eventId))
             throw IllegalStateException("Event with id $eventId does not exists")
         val eventInstance = eventRepo.findEventByUserIdAndEventId(userId, eventId).get()
-        val tagIdCollection: MutableList<Long> = mutableListOf()
+        val tagDTOCollection: MutableList<TagDTO> = mutableListOf()
 
         println(eventInstance.tags?.size.toString())
         eventInstance.tags?.forEach {
             println(it.tagId.toString())
-            tagIdCollection.add(it.tagId)
+            tagDTOCollection.add(TagDTO(
+                    tagId = it.tagId,
+                    tagColor = it.tagColor,
+                    tagDesc = it.tagDescription,
+                    tagName = it.tagName
+            ))
         }
 
         return EventDTO(
@@ -80,7 +87,7 @@ class EventService(private var eventRepo: EventRepo,
                 eventDesc = eventInstance.eventDesc,
                 eventDate = eventInstance.eventDate.toString(),
                 eventName = eventInstance.eventName,
-                tags = tagIdCollection
+                tags = tagDTOCollection
         )
     }
 
