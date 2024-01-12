@@ -47,10 +47,8 @@ class EventService(private var eventRepo: EventRepo,
         else eventInstances
         val eventDTOList = listOf<EventDTO>().toMutableList()
         eventInstances.forEach { eventInstance ->
-            println(eventInstance.eventName)
             val tagDTOCollection: MutableList<TagDTO> = mutableListOf()
             eventInstance.tags?.forEach {
-                println(it.tagId.toString())
                 tagDTOCollection.add(TagDTO(
                         tagId = it.tagId,
                         tagColor = it.tagColor,
@@ -82,9 +80,7 @@ class EventService(private var eventRepo: EventRepo,
         val eventInstance = eventRepo.findEventByUserIdAndEventId(userId, eventId).get()
         val tagDTOCollection: MutableList<TagDTO> = mutableListOf()
 
-        println(eventInstance.tags?.size.toString())
         eventInstance.tags?.forEach {
-            println(it.tagId.toString())
             tagDTOCollection.add(TagDTO(
                     tagId = it.tagId,
                     tagColor = it.tagColor,
@@ -132,7 +128,6 @@ class EventService(private var eventRepo: EventRepo,
             throw Exception("This user not allowed to use this event")
         }
 
-        println(eventInstance.eventId)
 
         if (eventUpdateDTO.eventDate is LocalDateTime) {
             eventInstance.eventDate = eventUpdateDTO.eventDate!!
@@ -149,9 +144,7 @@ class EventService(private var eventRepo: EventRepo,
         if (eventUpdateDTO.tags is Collection<*>) {
             val newListTags: MutableList<Tag> = listOf<Tag>().toMutableList()
             eventUpdateDTO.tags?.forEach {
-                println(it.toString())
                 val tag = tagRepo.findById(it)
-                println(tag)
                 if (!tag.isEmpty) {
                     newListTags.apply { add(tag.get()) }
                 }

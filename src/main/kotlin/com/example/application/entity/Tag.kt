@@ -20,8 +20,8 @@ data class Tag(
     var tagName: String,
 
     @JsonProperty("tag_desc")
-    @Column(name = "tag_desc")
-    var tagDescription: String,
+    @Column(name = "tag_desc", nullable = true)
+    var tagDescription: String? = null,
 
     @JsonProperty("tag_color")
     @Column(name = "tag_color")

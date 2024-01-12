@@ -7,7 +7,7 @@ data class TagCreateDTO(
         @SerializedName("tagName") var tagName: String,
 
         @JsonProperty("tagDesc")
-        @SerializedName("tagDesc") var tagDesc: String,
+        @SerializedName("tagDesc") var tagDesc: String? = null,
 
         @JsonProperty("tagColor")
         @SerializedName("tagColor") var tagColor: String,

@@ -23,7 +23,7 @@ class TagService(private var tagRepo: TagRepo, private val userRepo: UserRepo) {
         val simpleFilter: String = if (simpleFilter.isEmpty) "" else simpleFilter.get().lowercase()
 
         var tagInstances = tagRepo.findAllByUserId(userId).filter { tag: Tag ->
-            tag.tagName.lowercase().contains(simpleFilter) || tag.tagDescription.lowercase().contains(simpleFilter)
+            tag.tagName.lowercase().contains(simpleFilter) || tag.tagDescription?.lowercase()?.contains(simpleFilter) ?: false
         }
 
         val tagInstancesAllAmount = tagInstances.size
