@@ -7,7 +7,6 @@ import com.example.application.repository.EventRepo
 import com.example.application.repository.TagRepo
 import com.example.application.repository.UserRepo
 import org.springframework.stereotype.Service
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
@@ -29,10 +28,10 @@ class EventService(private var eventRepo: EventRepo,
         var eventInstances = eventRepo.findAllByUserId(userId).filter { event: Event ->
             event.eventName.lowercase().contains(simpleFilter) || event.eventDesc?.lowercase()?.contains(simpleFilter) ?: false
         }
-        if (!tagFilter.isEmpty ) {
+        if (!tagFilter.isEmpty) {
             val tagFilter = tagFilter.get()
             eventInstances = eventInstances.filter { event: Event ->
-                event.tags!!.map { tag:Tag ->
+                event.tags!!.map { tag: Tag ->
                     tag.tagId
                 }.contains(tagFilter)
             }
@@ -59,7 +58,7 @@ class EventService(private var eventRepo: EventRepo,
             eventDTOList.add(EventDTO(
                     eventId = eventInstance.eventId,
                     eventDesc = eventInstance.eventDesc,
-                    eventDate = eventInstance.eventDate.let {if (it !== null) it.toString() else it},
+                    eventDate = eventInstance.eventDate.let { if (it !== null) it.toString() else it },
                     eventName = eventInstance.eventName,
                     tags = tagDTOCollection,
                     eventCompletion = eventInstance.eventCompletion
@@ -92,14 +91,14 @@ class EventService(private var eventRepo: EventRepo,
         return EventDTO(
                 eventId = eventInstance.eventId,
                 eventDesc = eventInstance.eventDesc,
-                eventDate = eventInstance.eventDate.let {if (it !== null) it.toString() else it},
+                eventDate = eventInstance.eventDate.let { if (it !== null) it.toString() else it },
                 eventName = eventInstance.eventName,
                 tags = tagDTOCollection,
                 eventCompletion = eventInstance.eventCompletion
         )
     }
 
-    fun createEvent(userId: UUID, eventCreateDTO: EventCreateDTO): Event {
+    fun createEvent(userId: UUID, eventCreateDTO: EventCreateDTO): EventDTO {
         val userInstance = userRepo.findById(userId).get()
         val newListTags: MutableList<Tag> = listOf<Tag>().toMutableList()
         eventCreateDTO.tags?.forEach {
@@ -108,7 +107,7 @@ class EventService(private var eventRepo: EventRepo,
                 newListTags.apply { add(tag.get()) }
             }
         }
-        val eventInstance = Event(
+        var eventInstance = Event(
                 eventName = eventCreateDTO.eventName,
                 eventDate = eventCreateDTO.eventDate,
                 eventDesc = eventCreateDTO.eventDesc,
@@ -116,12 +115,29 @@ class EventService(private var eventRepo: EventRepo,
                 user = userInstance,
                 eventCompletion = eventCreateDTO.eventCompletion
         )
+        eventInstance = eventRepo.save(eventInstance)
 
-        return eventRepo.save(eventInstance)
+        val tagDTOCollection: MutableList<TagDTO> = mutableListOf()
+        eventInstance.tags?.forEach {
+            tagDTOCollection.add(TagDTO(
+                    tagId = it.tagId,
+                    tagColor = it.tagColor,
+                    tagDesc = it.tagDescription,
+                    tagName = it.tagName
+            ))
+        }
+        return EventDTO(
+                eventId = eventInstance.eventId,
+                eventDesc = eventInstance.eventDesc,
+                eventDate = eventInstance.eventDate.let { if (it !== null) it.toString() else it },
+                eventName = eventInstance.eventName,
+                tags = tagDTOCollection,
+                eventCompletion = eventInstance.eventCompletion
+        )
     }
 
-    fun updateEvent(userId: UUID, eventId: Long, eventUpdateDTO: EventUpdateDTO): Event {
-        val eventInstance = eventRepo.findById(eventId)
+    fun updateEvent(userId: UUID, eventId: Long, eventUpdateDTO: EventUpdateDTO): EventDTO {
+        var eventInstance = eventRepo.findById(eventId)
                 .orElseThrow { java.lang.IllegalStateException("factor with id" + eventId + "does not exist") }
 
         if (userId.compareTo(eventInstance.user?.userId) != 0) {
@@ -152,7 +168,25 @@ class EventService(private var eventRepo: EventRepo,
             eventInstance.tags = newListTags
         }
 
-        return eventRepo.save(eventInstance)
+        eventInstance = eventRepo.save(eventInstance)
+
+        val tagDTOCollection: MutableList<TagDTO> = mutableListOf()
+        eventInstance.tags?.forEach {
+            tagDTOCollection.add(TagDTO(
+                    tagId = it.tagId,
+                    tagColor = it.tagColor,
+                    tagDesc = it.tagDescription,
+                    tagName = it.tagName
+            ))
+        }
+        return EventDTO(
+                eventId = eventInstance.eventId,
+                eventDesc = eventInstance.eventDesc,
+                eventDate = eventInstance.eventDate.let { if (it !== null) it.toString() else it },
+                eventName = eventInstance.eventName,
+                tags = tagDTOCollection,
+                eventCompletion = eventInstance.eventCompletion
+        )
     }
 
     fun deleteEventById(userId: UUID, eventId: Long) {

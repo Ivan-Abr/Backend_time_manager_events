@@ -64,7 +64,7 @@ class EventController(private var eventService: EventService) {
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "Событие найдено", content = [Content(
             mediaType = "application/json",
-            array = ArraySchema(schema = Schema(implementation = Event::class)))]),
+            array = ArraySchema(schema = Schema(implementation = EventDTO::class)))]),
         ApiResponse(responseCode = "400", description = "Введены неверные данные", content = [Content()]),
         ApiResponse(responseCode = "401", description = "Токен не валидный", content = [Content()]),
         ApiResponse(responseCode = "500", description = "Событие не найдено", content = [Content()]))
@@ -76,7 +76,7 @@ class EventController(private var eventService: EventService) {
 
         @Parameter(description = "dto  для добавления ",
             schema = Schema(implementation = TagUpdateDTO::class))
-        @RequestBody eventCreateDTO: EventCreateDTO): Event {
+        @RequestBody eventCreateDTO: EventCreateDTO): EventDTO {
         return eventService.createEvent(userId, eventCreateDTO)
     }
 
@@ -86,7 +86,7 @@ class EventController(private var eventService: EventService) {
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "Событие найдено", content = [Content(
             mediaType = "application/json",
-            array = ArraySchema(schema = Schema(implementation = Event::class)))]),
+            array = ArraySchema(schema = Schema(implementation = EventDTO::class)))]),
         ApiResponse(responseCode = "400", description = "Введены неверные данные", content = [Content()]),
         ApiResponse(responseCode = "401", description = "Токен не валидный", content = [Content()]),
         ApiResponse(responseCode = "500", description = "Событие не найдено", content = [Content()]))
@@ -99,7 +99,7 @@ class EventController(private var eventService: EventService) {
         @PathVariable("eventId") eventId: Long,
 
         @Parameter(description = "dto  для изменения ")
-        @RequestBody eventUpdateDTO: EventUpdateDTO): Event {
+        @RequestBody eventUpdateDTO: EventUpdateDTO): EventDTO {
         return eventService.updateEvent(userId, eventId, eventUpdateDTO)
     }
 
